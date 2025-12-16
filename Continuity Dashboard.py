@@ -1,6 +1,6 @@
 import streamlit as st
-import matplotlib.pyplot as plt
 import os
+import pandas as pd  # لاستخدام DataFrame مع st.bar_chart
 
 # ========================
 # تعريف كلاس المجال
@@ -35,16 +35,12 @@ class Dashboard:
         if not st.session_state.areas_list:
             st.warning("لا يوجد بيانات للرسم.")
             return
-        areas = [area.name for area in st.session_state.areas_list]
-        readiness_scores = [area.readiness_score for area in st.session_state.areas_list]
-
-        fig, ax = plt.subplots()
-        ax.bar(areas, readiness_scores, color='skyblue')
-        ax.set_xlabel("المجالات")
-        ax.set_ylabel("درجة الجاهزية")
-        ax.set_title("رسم كل المجالات مع درجات الجاهزية")
-        ax.set_ylim(0, 100)
-        st.pyplot(fig)
+        # تحويل البيانات لـ DataFrame
+        df = pd.DataFrame({
+            "المجالات": [area.name for area in st.session_state.areas_list],
+            "درجة الجاهزية": [area.readiness_score for area in st.session_state.areas_list]
+        })
+        st.bar_chart(data=df.set_index("المجالات"))
 
     def save_to_file(self, filename):
         with open(filename, "w", encoding="utf-8") as file:
